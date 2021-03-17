@@ -4,14 +4,24 @@ using UnityEngine;
 
 public class PuzzleManager : MonoBehaviour
 {
+    public static PuzzleManager Instance;
     List<List<int>> puzzleField = new List<List<int>>();//-1:空、0:空 1:色1 2:色2 3:色3
     public int Size { get; private set; } = 4;
     public int Exheight { get; private set; } = 1;
     int Colornum = 2;
+    public int nextColor;
 
     // Start is called before the first frame update
     void Start()
     {
+        if(Instance==null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(this.gameObject);
+        }
         for (int i = 0; i < Size + Exheight; i++)
         {
             List<int> tempList = new List<int>();
@@ -90,7 +100,7 @@ public class PuzzleManager : MonoBehaviour
         }
         PrintField(puzzleField);
     }
-    private int PutBall(int line, int color)
+    public int PutBall(int line, int color)
     {
         for (int i = Size + Exheight - 1; i >= 0; i--)
         {
@@ -123,5 +133,34 @@ public class PuzzleManager : MonoBehaviour
             print(a);
         }
         print("--------------------");
+    }
+    public int SelectLine(int direction)
+    {
+        int temp=0;
+        for (int i=0;i<Size;i++)
+        {
+            temp += i + 1;
+        }
+        temp = Random.Range(0, temp);
+        for (int i = 0; i < Size; i++)
+        {
+            temp -= i + 1;
+            if (temp <= 0)
+            {
+                if (direction == -1)
+                {
+                    return Size - i - 1;
+                }
+                else
+                {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+    public void ChooseNextColor()
+    {
+        nextColor = Random.Range(1,Colornum+1);
     }
 }
