@@ -14,7 +14,7 @@ public class PuzzleManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if(Instance==null)
+        if (Instance == null)
         {
             Instance = this;
         }
@@ -27,7 +27,7 @@ public class PuzzleManager : MonoBehaviour
             List<int> tempList = new List<int>();
             for (int j = 0; j < Size; j++)
             {
-                tempList.Add(Random.Range(0, 3));
+                tempList.Add(0);
             }
             puzzleField.Add(tempList);
         }
@@ -63,6 +63,10 @@ public class PuzzleManager : MonoBehaviour
             }
             rolledPuzzleField.Add(tempList);
         }
+        for (int i = Size; i < Size + Exheight; i++)
+        {
+            rolledPuzzleField.Add(puzzleField[i]);
+        }
         switch (rollDirection)
         {
             case -1://左回転
@@ -73,7 +77,7 @@ public class PuzzleManager : MonoBehaviour
                     {
                         if (puzzleField[i][j] > 0)
                         {
-                            rolledPuzzleField[count][Size - i-1] = puzzleField[i][j];
+                            rolledPuzzleField[count][Size - i - 1] = puzzleField[i][j];
                             count++;
                         }
                     }
@@ -86,7 +90,7 @@ public class PuzzleManager : MonoBehaviour
                 for (int i = 0; i < Size; i++)
                 {
                     int count = 0;
-                    for (int j = Size - 1; j >=0; j--)
+                    for (int j = Size - 1; j >= 0; j--)
                     {
                         if (puzzleField[i][j] > 0)
                         {
@@ -136,8 +140,8 @@ public class PuzzleManager : MonoBehaviour
     }
     public int SelectLine(int direction)
     {
-        int temp=0;
-        for (int i=0;i<Size;i++)
+        int temp = 0;
+        for (int i = 0; i < Size; i++)
         {
             temp += i + 1;
         }
@@ -161,6 +165,6 @@ public class PuzzleManager : MonoBehaviour
     }
     public void ChooseNextColor()
     {
-        nextColor = Random.Range(1,Colornum+1);
+        nextColor = Random.Range(1, Colornum + 1);
     }
 }
