@@ -70,7 +70,6 @@ public class PuzzleManager : MonoBehaviour
         switch (rollDirection)
         {
             case -1://左回転
-                break;
                 for (int i = 0; i < Size; i++)
                 {
                     int count = 0;
@@ -84,6 +83,7 @@ public class PuzzleManager : MonoBehaviour
                     }
                 }
                 puzzleField = rolledPuzzleField;
+                break;
             case 0:
                 break;
             case 1:
