@@ -70,23 +70,7 @@ public class PuzzleManager : MonoBehaviour
         switch (rollDirection)
         {
             case -1://左回転
-                for (int i = 0; i < Size; i++)
-                {
-                    int count = 0;
-                    for (int j = 0; j < Size; j++)
-                    {
-                        if (puzzleField[i][j] > 0)
-                        {
-                            rolledPuzzleField[count][Size - i - 1] = puzzleField[i][j];
-                            count++;
-                        }
-                    }
-                }
-                puzzleField = rolledPuzzleField;
                 break;
-            case 0:
-                break;
-            case 1:
                 for (int i = 0; i < Size; i++)
                 {
                     int count = 0;
@@ -95,6 +79,22 @@ public class PuzzleManager : MonoBehaviour
                         if (puzzleField[i][j] > 0)
                         {
                             rolledPuzzleField[count][i] = puzzleField[i][j];
+                            count++;
+                        }
+                    }
+                }
+                puzzleField = rolledPuzzleField;
+            case 0:
+                break;
+            case 1:
+                for (int i = 0; i < Size; i++)
+                {
+                    int count = 0;
+                    for (int j = 0; j < Size; j++)
+                    {
+                        if (puzzleField[i][j] > 0)
+                        {
+                            rolledPuzzleField[count][Size - i - 1] = puzzleField[i][j];
                             count++;
                         }
                     }
