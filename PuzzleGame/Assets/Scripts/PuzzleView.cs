@@ -29,7 +29,10 @@ public class PuzzleView : MonoBehaviour
     [SerializeField] private GameObject size5Vertical;
     [SerializeField] private GameObject size4SideWall;
     [SerializeField] private GameObject size5SideWall;
+    [SerializeField] private BoxCollider2D size4FieldCollider;
+    [SerializeField] private BoxCollider2D size5FieldCollider;//当たり判定に入っているボールを盤面ごと登録しておいて消すときや転がすときに活用。
     [SerializeField] private GameObject GameSet;
+    
 
     public bool finishRoll;
     public bool finishFall;
@@ -58,10 +61,10 @@ public class PuzzleView : MonoBehaviour
         {
             if (rollTimer < maxRollTime)
             {
-                if(rollTimer>maxRollTime/2&rollTimer-Time.deltaTime<maxRollTime/2)
-                {
-                    ResetWall();
-                }
+                //if(rollTimer>maxRollTime/2&rollTimer-Time.deltaTime<maxRollTime/2)
+                //{
+                //    ResetWall();
+                //}
                 rollTimer += Time.deltaTime;
                 switch (PuzzleManager.Instance.Size)
                 {
@@ -75,6 +78,7 @@ public class PuzzleView : MonoBehaviour
             }
             else//回転終了
             {
+                ResetWall();
                 finishRoll = true;
                 rollWay = 0;
             }
