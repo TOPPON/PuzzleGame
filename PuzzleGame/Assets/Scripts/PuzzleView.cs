@@ -174,10 +174,12 @@ public class PuzzleView : MonoBehaviour
         this.rollWay = rollWay;
         finishRoll = false;
         rollTimer = 0;
+
         switch (PuzzleManager.Instance.Size)
         {
             case 4:
                 size4Vertical.SetActive(false);
+                size4FieldCollider.
                 break;
             case 5:
                 size5Vertical.SetActive(false);

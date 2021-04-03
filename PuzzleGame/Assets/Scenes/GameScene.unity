@@ -2933,7 +2933,7 @@ PrefabInstance:
     - target: {fileID: 8283299310966684256, guid: 99aaf0ff0cbb1ae46a75bd3d3362a7e5,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 5
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 8283299310966684256, guid: 99aaf0ff0cbb1ae46a75bd3d3362a7e5,
         type: 3}
@@ -3776,6 +3776,8 @@ MonoBehaviour:
   size5Vertical: {fileID: 0}
   size4SideWall: {fileID: 1007482200}
   size5SideWall: {fileID: 0}
+  size4FieldCollider: {fileID: 0}
+  size5FieldCollider: {fileID: 0}
   GameSet: {fileID: 1294279123}
   finishRoll: 0
   finishFall: 0
