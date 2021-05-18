@@ -42,6 +42,7 @@ public class PuzzleBall : MonoBehaviour
                     deleteTimer -= Time.deltaTime;
                     transform.localScale = defaultLocalScale * deleteTimer;
                 }
+                else Destroy(gameObject);
                 break;
         }
     }
