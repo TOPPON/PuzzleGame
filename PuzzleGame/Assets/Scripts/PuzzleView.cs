@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PuzzleView : MonoBehaviour
 {
@@ -31,6 +32,8 @@ public class PuzzleView : MonoBehaviour
     [SerializeField] private GameObject size5SideWall;
     [SerializeField] private BoxCollider2D size4FieldCollider;
     [SerializeField] private BoxCollider2D size5FieldCollider;//当たり判定に入っているボールを盤面ごと登録しておいて消すときや転がすときに活用。
+    [SerializeField] private Text scoreDisplay;
+    [SerializeField] private Text roundDisplay;
     [SerializeField] private GameObject GameSet;
     private List<List<GameObject>> ballObjects = new List<List<GameObject>>();
 
@@ -99,6 +102,10 @@ public class PuzzleView : MonoBehaviour
         {
             finishFall = CheckAndFreezeBallsPosition();
         }
+
+        //点数の更新
+        scoreDisplay.text = "Score\n"+PuzzleManager.Instance.score.ToString();
+        roundDisplay.text = "Round\n" + PuzzleManager.Instance.round.ToString();
     }
     public void ResetObjectList()
     {

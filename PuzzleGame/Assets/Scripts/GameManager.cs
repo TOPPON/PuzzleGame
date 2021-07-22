@@ -20,6 +20,8 @@ public class GameManager : MonoBehaviour
         GameOver
     }
     public GameState gameState;
+
+    float stateTimer;
     // Start is called before the first frame update
     void Start()
     {
@@ -59,6 +61,8 @@ public class GameManager : MonoBehaviour
                 if (PuzzleView.Instance.finishThrow)
                 {
                     ChangeGameState(GameState.FirstJudge);
+                    PuzzleManager.Instance.combo =0;
+                    PuzzleManager.Instance.comboRound = 0;
                     PuzzleView.Instance.ResetWall();
                 }
                 break;
@@ -67,6 +71,9 @@ public class GameManager : MonoBehaviour
                 if (deleteLine1.Count > 0)
                 {
                     PuzzleView.Instance.DeleteBalls(deleteLine1);
+                    PuzzleManager.Instance.combo += deleteLine1.Count;
+                    PuzzleManager.Instance.comboRound += 1;
+                    PuzzleManager.Instance.AddScore(deleteLine1.Count);
                     PuzzleManager.Instance.Fall();
                     ChangeGameState(GameState.FirstJudgeFallingAnimation);
                     PuzzleView.Instance.Fall();
@@ -106,6 +113,9 @@ public class GameManager : MonoBehaviour
                 if (PuzzleView.Instance.finishRoll)
                 {
                     ChangeGameState(GameState.RollingAfterFallingAnimation);
+                    PuzzleManager.Instance.combo = 0;
+                    PuzzleManager.Instance.comboRound = 0;
+                    PuzzleManager.Instance.Fall();
                     PuzzleView.Instance.ResetWall();
                     PuzzleView.Instance.Fall();
                 }
@@ -121,6 +131,9 @@ public class GameManager : MonoBehaviour
                 if (deleteLine2.Count > 0)
                 {
                     PuzzleView.Instance.DeleteBalls(deleteLine2);
+                    PuzzleManager.Instance.combo += deleteLine2.Count;
+                    PuzzleManager.Instance.comboRound += 1;
+                    PuzzleManager.Instance.AddScore(deleteLine2.Count);
                     PuzzleManager.Instance.Fall();
                     ChangeGameState(GameState.SecondJudgeFallingAnimation);
                     PuzzleView.Instance.Fall();
@@ -138,6 +151,11 @@ public class GameManager : MonoBehaviour
                 }
                 break;
             case GameState.FinalBallThrowingAnimation:
+                stateTimer += Time.deltaTime;
+                if(stateTimer>10)
+                {
+                    ChangeGameState(GameState.GameOver);
+                }
                 break;
             case GameState.GameOver:
                 break;
@@ -145,12 +163,14 @@ public class GameManager : MonoBehaviour
     }
     void ChangeGameState(GameState nextState)
     {
+        stateTimer = 0;
         switch (nextState)
         {
             case GameState.LeftRightSelect:
                 PuzzleManager.Instance.ChooseNextColor();
                 PuzzleView.Instance.DisplayNextColor(PuzzleManager.Instance.nextColor);
                 print("NextColorは" + PuzzleManager.Instance.nextColor);
+                PuzzleManager.Instance.score += PuzzleManager.Instance.round++;
                 break;
             case GameState.BallThrowingAnimation:
                 break;

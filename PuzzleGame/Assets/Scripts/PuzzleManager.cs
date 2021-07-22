@@ -10,6 +10,10 @@ public class PuzzleManager : MonoBehaviour
     public int Exheight { get; private set; } = 1;
     int Colornum = 2;
     public int nextColor;
+    public int score;//点数
+    public int combo;//何個連鎖したか
+    public int round;//ラウンド数、基本スコアになる
+    public int comboRound;//一回の操作での連鎖数(Fallが呼ばれた回数分)
 
     // Start is called before the first frame update
     void Start()
@@ -54,6 +58,7 @@ public class PuzzleManager : MonoBehaviour
     }
     public void Roll(int rollDirection)//-1:左 0:真ん中 1:右 
     {
+        print("Rolling\n");
         PrintField(puzzleField);
         List<List<int>> rolledPuzzleField = new List<List<int>>();
         for (int i = 0; i < Size; i++)
@@ -104,6 +109,7 @@ public class PuzzleManager : MonoBehaviour
                 puzzleField = rolledPuzzleField;
                 break;
         }
+        print("Rolled\n");
         PrintField(puzzleField);
     }
     public int PutBall(int line, int color)
@@ -129,7 +135,7 @@ public class PuzzleManager : MonoBehaviour
     void PrintField(List<List<int>> field)
     {
         print("--------------------");
-        for (int i = Size - 1; i >= 0; i--)
+        for (int i = Size +Exheight- 1; i >= 0; i--)
         {
             string a = "";
             for (int j = 0; j < Size; j++)
@@ -226,7 +232,21 @@ public class PuzzleManager : MonoBehaviour
         }
         foreach (int temp in deleteLine)
         {
-            if (temp % 10 == 0)
+            if (temp == 100)
+            {
+                for (int i = 0; i < Size; i++)
+                {
+                    puzzleField[i][i] = -1;
+                }
+            }
+            else if (temp == 200)
+            {
+                for (int i = 0; i < Size; i++)
+                {
+                    puzzleField[i][Size - 1 - i] = -1;
+                }
+            }
+            else if (temp % 10 == 0)
             {
                 for (int i = 0; i < Size; i++)
                 {
@@ -260,5 +280,11 @@ public class PuzzleManager : MonoBehaviour
                 }
             }
         }
+        print("Falled\n");
+        PrintField(puzzleField);
+    }
+    public void AddScore(int deleteLines)
+    {
+        score += (int)(deleteLines*combo*Mathf.Pow(2,comboRound)*(round/10.0+10));
     }
 }
