@@ -170,6 +170,7 @@ public class GameManager : MonoBehaviour
                 PuzzleManager.Instance.ChooseNextColor();
                 PuzzleView.Instance.DisplayNextColor(PuzzleManager.Instance.nextColor);
                 print("NextColorは" + PuzzleManager.Instance.nextColor);
+                print("ラウンド数ボーナス:"+PuzzleManager.Instance.round.ToString());
                 PuzzleManager.Instance.score += PuzzleManager.Instance.round++;
                 break;
             case GameState.BallThrowingAnimation:

@@ -286,5 +286,6 @@ public class PuzzleManager : MonoBehaviour
     public void AddScore(int deleteLines)
     {
         score += (int)(deleteLines*combo*Mathf.Pow(2,comboRound)*(round/10.0+10));
+        print("ライン数:x"+deleteLines.ToString()+" Combo:x"+combo.ToString()+" comboRoundBonus:x"+ Mathf.Pow(2, comboRound).ToString()+" baseScore:"+ (round / 10.0 + 10).ToString());
     }
 }
