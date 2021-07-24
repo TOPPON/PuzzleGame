@@ -104,7 +104,7 @@ public class PuzzleView : MonoBehaviour
         }
 
         //点数の更新
-        scoreDisplay.text = "Score\n"+PuzzleManager.Instance.score.ToString();
+        scoreDisplay.text = "Score\n" + PuzzleManager.Instance.score.ToString();
         roundDisplay.text = "Round\n" + PuzzleManager.Instance.round.ToString();
     }
     public void ResetObjectList()
@@ -349,16 +349,22 @@ public class PuzzleView : MonoBehaviour
                 {
                     for (int i = 0; i < Size; i++)
                     {
-                        ballObjects[i][i].GetComponent<PuzzleBall>().DeleteBall();
-                        ballObjects[i][i] = null;
+                        if (ballObjects[i][i] != null)
+                        {
+                            ballObjects[i][i].GetComponent<PuzzleBall>().DeleteBall();
+                            ballObjects[i][i] = null;
+                        }
                     }
                 }
                 else
                 {
                     for (int i = 0; i < Size; i++)
                     {
-                        ballObjects[Size - 1 - i][i].GetComponent<PuzzleBall>().DeleteBall();
-                        ballObjects[Size - 1 - i][i] = null;
+                        if (ballObjects[Size - 1 - i][i] != null)
+                        {
+                            ballObjects[Size - 1 - i][i].GetComponent<PuzzleBall>().DeleteBall();
+                            ballObjects[Size - 1 - i][i] = null;
+                        }
                     }
                 }
             }
@@ -366,16 +372,22 @@ public class PuzzleView : MonoBehaviour
             {
                 for (int i = 0; i < Size; i++)
                 {
-                    ballObjects[temp / 10 - 1][i].GetComponent<PuzzleBall>().DeleteBall();
-                    ballObjects[temp / 10 - 1][i] = null;
+                    if (ballObjects[temp / 10 - 1][i] != null)
+                    {
+                        ballObjects[temp / 10 - 1][i].GetComponent<PuzzleBall>().DeleteBall();
+                        ballObjects[temp / 10 - 1][i] = null;
+                    }
                 }
             }
             else
             {
                 for (int i = 0; i < Size; i++)
                 {
-                    ballObjects[i][temp - 1].GetComponent<PuzzleBall>().DeleteBall();
-                    ballObjects[i][temp - 1] = null;
+                    if (ballObjects[i][temp - 1] != null)
+                    {
+                        ballObjects[i][temp - 1].GetComponent<PuzzleBall>().DeleteBall();
+                        ballObjects[i][temp - 1] = null;
+                    }
                 }
             }
         }
