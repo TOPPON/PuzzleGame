@@ -41,7 +41,7 @@ public class PuzzleView : MonoBehaviour
     public bool finishRoll;
     public bool finishThrow;
     public bool finishFall;
-    private int rollWay;//
+    private int rollWay;//回転する方向、-1:左、1:右、0:なし
     private float rollTimer;
     const float maxRollTime = 3;
 
@@ -432,13 +432,20 @@ public class PuzzleView : MonoBehaviour
                 switch (PuzzleManager.Instance.Size)
                 {
                     case 4:
+                        print(rollWay.ToString()+":"+ size4Field.transform.localRotation.eulerAngles.z);
+                        //1:0-90
+                        //-1:360-270
+                        if(rollWay==1)
+                        {
+
+                        }
                         correctPosition = new Vector3(Mathf.Cos(size4Field.transform.localRotation.eulerAngles.z) * new Vector3(j - (PuzzleManager.Instance.Size - 1) / 2.0f, i - (PuzzleManager.Instance.Size - 1) / 2.0f).magnitude,
-                            Mathf.Sin(size4Field.transform.localRotation.eulerAngles.z) * new Vector3(j - (PuzzleManager.Instance.Size - 1) / 2.0f, i - (PuzzleManager.Instance.Size - 1) / 2.0f).magnitude);
+                            Mathf.Sin(size4Field.transform.localRotation.eulerAngles.z) * new Vector3(j - (PuzzleManager.Instance.Size - 1) / 2.0f, i - (PuzzleManager.Instance.Size - 1) / 2.0f).magnitude-1);
                         break;
                     case 5:
                         //correctPosition = size5Field.transform.localRotation * new Vector3(j - (PuzzleManager.Instance.Size - 1) / 2.0f, i - (PuzzleManager.Instance.Size - 1) / 2.0f) + new Vector3(0, -1, 0);
                         correctPosition = new Vector3(Mathf.Cos(size5Field.transform.localRotation.eulerAngles.z) * new Vector3(j - (PuzzleManager.Instance.Size - 1) / 2.0f, i - (PuzzleManager.Instance.Size - 1) / 2.0f).magnitude,
-                             Mathf.Sin(size5Field.transform.localRotation.eulerAngles.z) * new Vector3(j - (PuzzleManager.Instance.Size - 1) / 2.0f, i - (PuzzleManager.Instance.Size - 1) / 2.0f).magnitude);
+                             Mathf.Sin(size5Field.transform.localRotation.eulerAngles.z) * new Vector3(j - (PuzzleManager.Instance.Size - 1) / 2.0f, i - (PuzzleManager.Instance.Size - 1) / 2.0f).magnitude-1);
                         break;
                 }
                 if ((ballObjects[i][j].gameObject.transform.localPosition - correctPosition).magnitude < 0.1f)
