@@ -432,32 +432,36 @@ public class PuzzleView : MonoBehaviour
                 switch (PuzzleManager.Instance.Size)
                 {
                     case 4:
-                        print(rollWay.ToString()+":"+ size4Field.transform.localRotation.eulerAngles.z);
+                        print(rollWay.ToString() + ":" + size4Field.transform.localRotation.eulerAngles.z);
                         //1:0-90
                         //-1:360-270
-                        if(rollWay==1)
+                        if (rollWay == 1)
                         {
-
+                            correctPosition= size4Field.transform.localRotation * Quaternion.Euler(0, 0, -90) * new Vector3(j - (PuzzleManager.Instance.Size - 1) / 2.0f, i - (PuzzleManager.Instance.Size - 1) / 2.0f) - new Vector3(0, 1);
                         }
-                        correctPosition = new Vector3(Mathf.Cos(size4Field.transform.localRotation.eulerAngles.z) * new Vector3(j - (PuzzleManager.Instance.Size - 1) / 2.0f, i - (PuzzleManager.Instance.Size - 1) / 2.0f).magnitude,
-                            Mathf.Sin(size4Field.transform.localRotation.eulerAngles.z) * new Vector3(j - (PuzzleManager.Instance.Size - 1) / 2.0f, i - (PuzzleManager.Instance.Size - 1) / 2.0f).magnitude-1);
+                        else if (rollWay == -1)
+                        {
+                            correctPosition = size4Field.transform.localRotation * Quaternion.Euler(0, 0, 90) * new Vector3(j - (PuzzleManager.Instance.Size - 1) / 2.0f, i - (PuzzleManager.Instance.Size - 1) / 2.0f) - new Vector3(0, 1);
+                        }
                         break;
                     case 5:
                         //correctPosition = size5Field.transform.localRotation * new Vector3(j - (PuzzleManager.Instance.Size - 1) / 2.0f, i - (PuzzleManager.Instance.Size - 1) / 2.0f) + new Vector3(0, -1, 0);
-                        correctPosition = new Vector3(Mathf.Cos(size5Field.transform.localRotation.eulerAngles.z) * new Vector3(j - (PuzzleManager.Instance.Size - 1) / 2.0f, i - (PuzzleManager.Instance.Size - 1) / 2.0f).magnitude,
-                             Mathf.Sin(size5Field.transform.localRotation.eulerAngles.z) * new Vector3(j - (PuzzleManager.Instance.Size - 1) / 2.0f, i - (PuzzleManager.Instance.Size - 1) / 2.0f).magnitude-1);
+                        correctPosition = new Vector3(Mathf.Cos(size5Field.transform.localRotation.eulerAngles.z * Mathf.PI / 180) * new Vector3(j - (PuzzleManager.Instance.Size - 1) / 2.0f, i - (PuzzleManager.Instance.Size - 1) / 2.0f).magnitude,
+                             Mathf.Sin(size5Field.transform.localRotation.eulerAngles.z * Mathf.PI / 180) * new Vector3(j - (PuzzleManager.Instance.Size - 1) / 2.0f, i - (PuzzleManager.Instance.Size - 1) / 2.0f).magnitude - 1);
                         break;
                 }
-                if ((ballObjects[i][j].gameObject.transform.localPosition - correctPosition).magnitude < 0.1f)
+                if ((ballObjects[i][j].gameObject.transform.localPosition - correctPosition).magnitude < 0.05f)
                 {
                     //ballObjects[i][j].gameObject.GetComponent<Rigidbody2D>().isKinematic = true;
                     ballObjects[i][j].gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2();
                     ballObjects[i][j].gameObject.GetComponent<Rigidbody2D>().angularVelocity = 0f;
                     ballObjects[i][j].gameObject.transform.localPosition = correctPosition;
-                    ballObjects[i][j].gameObject.transform.localRotation = Quaternion.identity;
+                    //ballObjects[i][j].gameObject.transform.localRotation = Quaternion.identity;
                     ballObjects[i][j].gameObject.GetComponent<PuzzleBall>().SetActiveRangeBox(true);
+                    print("固定");
                 }
                 else isCorrectPosition = false;
+                print("local-" + ballObjects[i][j].gameObject.transform.localPosition + ":::correct-" + correctPosition);
             }
         }
         return isCorrectPosition;
