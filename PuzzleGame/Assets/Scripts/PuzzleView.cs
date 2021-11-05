@@ -41,6 +41,7 @@ public class PuzzleView : MonoBehaviour
     [SerializeField] private Button RightTurnButton;
     [SerializeField] private Button NotTurnButton;
     [SerializeField] private GameObject GameSet;
+    [SerializeField] private GameObject Canvas;
     private List<List<GameObject>> ballObjects = new List<List<GameObject>>();
 
 
@@ -490,7 +491,7 @@ public class PuzzleView : MonoBehaviour
                         break;
                 }
                 Vector3 correctPosition = new Vector3(j - (PuzzleManager.Instance.Size - 1) / 2.0f,
-                    (i >= PuzzleManager.Instance.Size) ? (i - (PuzzleManager.Instance.Size - 1) / 2.0f + rollingUnderY - 0.9f) : (i - (PuzzleManager.Instance.Size - 1) / 2.0f + rollingUnderY - 1));
+                    (i >= PuzzleManager.Instance.Size) ? (i - (PuzzleManager.Instance.Size - 1) / 2.0f - 0.9f) : (i - (PuzzleManager.Instance.Size - 1) / 2.0f + rollingUnderY - 1));
                 if ((ballObjects[i][j].gameObject.transform.localPosition - correctPosition).magnitude < 0.1f)
                 {
                     if (ballObjects[i][j].gameObject.GetComponent<Rigidbody2D>().isKinematic == false)
@@ -667,15 +668,15 @@ public class PuzzleView : MonoBehaviour
         for (int i = 0; i < chipNum; i++)
         {
             GameObject newChip;
-            newChip = Instantiate(scoreChipPrefab);
-            newChip.GetComponent<ScoreChip>().startPosition.position = scoreDisplay.GetComponent<RectTransform>().localPosition;
+            newChip = Instantiate(scoreChipPrefab,Canvas.transform);
+            newChip.GetComponent<ScoreChip>().goalPosition = scoreDisplay.GetComponent<RectTransform>().localPosition;
             if (isRoundBonus)
             {
-                newChip.GetComponent<ScoreChip>().startPosition.position = roundDisplay.GetComponent<RectTransform>().localPosition;
+                newChip.GetComponent<RectTransform>().localPosition = roundDisplay.GetComponent<RectTransform>().localPosition;
             }
             else
             {
-                newChip.GetComponent<ScoreChip>().startPosition.position = new Vector3(0, -166, 0);
+                newChip.GetComponent<RectTransform>().localPosition = new Vector3(0, -166, 0);
             }
         }
     }

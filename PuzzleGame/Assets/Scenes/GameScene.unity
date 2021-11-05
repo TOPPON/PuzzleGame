@@ -2495,6 +2495,7 @@ MonoBehaviour:
   RightTurnButton: {fileID: 1337709342}
   NotTurnButton: {fileID: 1351132220}
   GameSet: {fileID: 1294279123}
+  Canvas: {fileID: 1316881522}
   finishRoll: 1
   finishThrow: 1
   finishFall: 1
