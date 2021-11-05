@@ -22,6 +22,12 @@ public class GameManager : MonoBehaviour
     public GameState gameState;
 
     float stateTimer;
+
+    private bool pushLeftButton;
+    private bool pushRightButton;
+    private bool pushLeftTurnButton;
+    private bool pushRightTurnButton;
+    private bool pushNotTurnButton;
     // Start is called before the first frame update
     void Start()
     {
@@ -38,7 +44,7 @@ public class GameManager : MonoBehaviour
                 ChangeGameState(GameState.LeftRightSelect);
                 break;
             case GameState.LeftRightSelect:
-                if (Input.GetKeyDown(KeyCode.LeftArrow))
+                if (Input.GetKeyDown(KeyCode.LeftArrow)|pushLeftButton)
                 {
                     int line = PuzzleManager.Instance.SelectLine(-1);
                     print("lineは" + line);
@@ -47,26 +53,27 @@ public class GameManager : MonoBehaviour
                     if (row == -1) ChangeGameState(GameState.FinalBallThrowingAnimation);
                     else ChangeGameState(GameState.BallThrowingAnimation);
                 }
-                else if (Input.GetKeyDown(KeyCode.RightArrow))
+                else if (Input.GetKeyDown(KeyCode.RightArrow)|pushRightButton)
                 {
                     int line = PuzzleManager.Instance.SelectLine(1);
                     print("lineは" + line);
                     int row = PuzzleManager.Instance.PutBall(line, PuzzleManager.Instance.nextColor);
-                    PuzzleView.Instance.BallThrow(1, line, row, PuzzleManager.Instance.nextColor);//親オブジェクトに引っ付ける作業がまだです。
+                    PuzzleView.Instance.BallThrow(1, line, row, PuzzleManager.Instance.nextColor);
                     if (row == -1) ChangeGameState(GameState.FinalBallThrowingAnimation);
                     else ChangeGameState(GameState.BallThrowingAnimation);
                 }
                 break;
-            case GameState.BallThrowingAnimation://枠の当たり判定をいじるところがまだです。
+            case GameState.BallThrowingAnimation:
                 if (PuzzleView.Instance.finishThrow)
                 {
                     ChangeGameState(GameState.FirstJudge);
                     PuzzleManager.Instance.combo =0;
                     PuzzleManager.Instance.comboRound = 0;
                     PuzzleView.Instance.ResetWall();
+                    PuzzleView.Instance.DisplayNextColor(0);//次の色を消す
                 }
                 break;
-            case GameState.FirstJudge://判定部分も作れていません。判定後落として再判定する部分も作れてないです。
+            case GameState.FirstJudge:
                 List<int> deleteLine1 = PuzzleManager.Instance.JudgeLine();
                 if (deleteLine1.Count > 0)
                 {
@@ -91,18 +98,18 @@ public class GameManager : MonoBehaviour
                 }
                 break;
             case GameState.RollDirectionSelect:
-                if (Input.GetKeyDown(KeyCode.Z))
+                if (Input.GetKeyDown(KeyCode.Z)|pushLeftTurnButton)
                 {
                     PuzzleManager.Instance.Roll(-1);
                     PuzzleView.Instance.RollField(-1);
                     ChangeGameState(GameState.RollingAnimation);
                 }
-                else if (Input.GetKeyDown(KeyCode.X))
+                else if (Input.GetKeyDown(KeyCode.X)|pushNotTurnButton)
                 {
                     PuzzleManager.Instance.Roll(0);
                     ChangeGameState(GameState.SecondJudge);
                 }
-                else if (Input.GetKeyDown(KeyCode.C))
+                else if (Input.GetKeyDown(KeyCode.C)| pushRightTurnButton)
                 {
                     PuzzleManager.Instance.Roll(1);
                     PuzzleView.Instance.RollField(1);
@@ -160,10 +167,16 @@ public class GameManager : MonoBehaviour
             case GameState.GameOver:
                 break;
         }
+        pushLeftButton = false;
+        pushRightButton = false;
+        pushLeftTurnButton = false;
+        pushRightTurnButton = false;
+        pushNotTurnButton = false;
     }
     void ChangeGameState(GameState nextState)
     {
         stateTimer = 0;
+        PuzzleView.Instance.DisappearOperationButton();
         switch (nextState)
         {
             case GameState.LeftRightSelect:
@@ -171,11 +184,37 @@ public class GameManager : MonoBehaviour
                 PuzzleView.Instance.DisplayNextColor(PuzzleManager.Instance.nextColor);
                 print("NextColorは" + PuzzleManager.Instance.nextColor);
                 print("ラウンド数ボーナス:"+PuzzleManager.Instance.round.ToString());
+                PuzzleView.Instance.ScoreChipSpawn(PuzzleManager.Instance.round,true);
                 PuzzleManager.Instance.score += PuzzleManager.Instance.round++;
+                PuzzleView.Instance.AppearInButton();
+                break;
+            case GameState.RollDirectionSelect:
+                PuzzleView.Instance.AppearTurnButton();
                 break;
             case GameState.BallThrowingAnimation:
                 break;
         }
         gameState = nextState;
     }
+    public void PushLeftButton()
+    {
+        pushLeftButton = true;
+    }
+    public void PushRightButton()
+    {
+        pushRightButton = true;
+    }
+    public void PushTurnLeftButton()
+    {
+        pushLeftTurnButton = true;
+    }
+    public void PushTurnRightButton()
+    {
+        pushRightTurnButton = true;
+    }
+    public void PushNotTurnButton()
+    {
+        pushNotTurnButton = true;
+    }
+
 }

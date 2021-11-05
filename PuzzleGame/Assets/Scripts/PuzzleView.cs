@@ -13,6 +13,7 @@ public class PuzzleView : MonoBehaviour
     public GameObject redBallPrefab;
     public GameObject blueBallPrefab;
     public GameObject greenBallPrefab;
+    public GameObject scoreChipPrefab;
     public GameObject size4Cover;
     public GameObject size5Cover;
     public SpriteRenderer nextColorSprite;
@@ -34,6 +35,11 @@ public class PuzzleView : MonoBehaviour
     [SerializeField] private BoxCollider2D size5FieldCollider;//当たり判定に入っているボールを盤面ごと登録しておいて消すときや転がすときに活用。
     [SerializeField] private Text scoreDisplay;
     [SerializeField] private Text roundDisplay;
+    [SerializeField] private Button LeftButton;
+    [SerializeField] private Button RightButton;
+    [SerializeField] private Button LeftTurnButton;
+    [SerializeField] private Button RightTurnButton;
+    [SerializeField] private Button NotTurnButton;
     [SerializeField] private GameObject GameSet;
     private List<List<GameObject>> ballObjects = new List<List<GameObject>>();
 
@@ -44,7 +50,14 @@ public class PuzzleView : MonoBehaviour
     private int rollWay;//回転する方向、-1:左、1:右、0:なし
     private float rollTimer;
     const float maxRollTime = 3;
-
+    private int displayScore = 0;
+    private enum RollState
+    {
+        BeforeDown,
+        Rolling,
+        AfterUp
+    }
+    RollState rollState;
     // Start is called before the first frame update
     void Start()
     {
@@ -63,33 +76,98 @@ public class PuzzleView : MonoBehaviour
     {
         if (!finishRoll)
         {
-            if (rollTimer < maxRollTime)
+            switch (rollState)
             {
-                //if(rollTimer>maxRollTime/2&rollTimer-Time.deltaTime<maxRollTime/2)
-                //{
-                //    ResetWall();
-                //}
-                rollTimer += Time.deltaTime;
-                switch (PuzzleManager.Instance.Size)
-                {
-                    case 4:
-                        size4Field.transform.rotation = Quaternion.Euler(0, 0, rollTimer / maxRollTime * rollWay * 90);
-                        break;
-                    case 5:
-                        size5Field.transform.rotation = Quaternion.Euler(0, 0, rollTimer / maxRollTime * rollWay * 90);//ゲームマネージャーから回転の指示が来た瞬間に当たり判定いじる
-                        break;
-                }
-                CheckFreezeRoll();
+                case RollState.BeforeDown:
+                    if (rollTimer < 1)
+                    {
+                        rollTimer += Time.deltaTime;
+                        switch (PuzzleManager.Instance.Size)
+                        {
+                            case 4:
+                                size4Field.transform.localPosition = new Vector3(0, -1 - rollTimer);
+                                break;
+                            case 5:
+                                size5Field.transform.localPosition = new Vector3(0, -1 - rollTimer);
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        rollTimer = 0;
+                        rollState = RollState.Rolling;
+                        switch (PuzzleManager.Instance.Size)
+                        {
+                            case 4:
+                                size4Field.transform.localPosition = new Vector3(0, -2);
+                                break;
+                            case 5:
+                                size5Field.transform.localPosition = new Vector3(0, -2);
+                                break;
+                        }
+                    }
+                    break;
+                case RollState.Rolling:
+                    if (rollTimer < maxRollTime)
+                    {
+                        //if(rollTimer>maxRollTime/2&rollTimer-Time.deltaTime<maxRollTime/2)
+                        //{
+                        //    ResetWall();
+                        //}
+                        rollTimer += Time.deltaTime;
+                        switch (PuzzleManager.Instance.Size)
+                        {
+                            case 4:
+                                size4Field.transform.rotation = Quaternion.Euler(0, 0, rollTimer / maxRollTime * rollWay * 90);
+                                break;
+                            case 5:
+                                size5Field.transform.rotation = Quaternion.Euler(0, 0, rollTimer / maxRollTime * rollWay * 90);//ゲームマネージャーから回転の指示が来た瞬間に当たり判定いじる
+                                break;
+                        }
+                        CheckFreezeRoll();
+                    }
+                    else//回転終了
+                    {
+                        if (CheckAndFreezeBallsPosition())
+                        {
+                            ResetWall();
+                            rollWay = 0;
+                            rollTimer = 0;
+                            rollState = RollState.AfterUp;
+                        }
+                    }
+                    break;
+                case RollState.AfterUp:
+                    if (rollTimer < 1)
+                    {
+                        rollTimer += Time.deltaTime; switch (PuzzleManager.Instance.Size)
+                        {
+                            case 4:
+                                size4Field.transform.localPosition = new Vector3(0, -2 + rollTimer);
+                                break;
+                            case 5:
+                                size5Field.transform.localPosition = new Vector3(0, -2 + rollTimer);
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        finishRoll = true;
+                        switch (PuzzleManager.Instance.Size)
+                        {
+                            case 4:
+                                size4Field.transform.localPosition = new Vector3(0, -1, 0);
+                                break;
+                            case 5:
+                                size5Field.transform.localPosition = new Vector3(0, -1, 0);
+                                break;
+                        }
+
+                    }
+                    CheckAndFreezeBallsPosition();
+                    break;
             }
-            else//回転終了
-            {
-                if (CheckAndFreezeBallsPosition())
-                {
-                    ResetWall();
-                    finishRoll = true;
-                    rollWay = 0;
-                }
-            }
+
         }
         if (!finishThrow)//投入終了判定
         {
@@ -104,7 +182,7 @@ public class PuzzleView : MonoBehaviour
         }
 
         //点数の更新
-        scoreDisplay.text = "Score\n" + PuzzleManager.Instance.score.ToString();
+        scoreDisplay.text = "Score\n" + displayScore;//PuzzleManager.Instance.score.ToString();
         roundDisplay.text = "Round\n" + PuzzleManager.Instance.round.ToString();
     }
     public void ResetObjectList()
@@ -202,6 +280,7 @@ public class PuzzleView : MonoBehaviour
     {
         this.rollWay = rollWay;
         finishRoll = false;
+        rollState = RollState.BeforeDown;
         rollTimer = 0;
         MeltBalls();
         switch (PuzzleManager.Instance.Size)
@@ -219,8 +298,10 @@ public class PuzzleView : MonoBehaviour
     {
         switch (nextColor)
         {
+            case 0:
+                nextColorSprite.sprite = null;
+                break;
             case 1:
-                nextColorSprite.sprite = redBallPrefab.GetComponent<SpriteRenderer>().sprite;
                 nextColorSprite.sprite = redBallPrefab.GetComponent<SpriteRenderer>().sprite;
                 break;
             case 2:
@@ -293,7 +374,6 @@ public class PuzzleView : MonoBehaviour
                 size4SideWall.SetActive(true);
                 size4Vertical.SetActive(true);
                 size4Field.transform.rotation = Quaternion.identity;
-                size4Field.transform.localPosition = new Vector3(0, -1, 0);
                 switch (PuzzleManager.Instance.Exheight)
                 {
                     case 1:
@@ -317,7 +397,6 @@ public class PuzzleView : MonoBehaviour
                 size5SideWall.SetActive(true);
                 size5Vertical.SetActive(true);
                 size5Field.transform.rotation = Quaternion.identity;
-                size5Field.transform.localPosition = new Vector3(0, -1, 0);
                 switch (PuzzleManager.Instance.Exheight)
                 {
                     case 1:
@@ -400,8 +479,18 @@ public class PuzzleView : MonoBehaviour
             for (int j = 0; j < PuzzleManager.Instance.Size; j++)
             {
                 if (ballObjects[i][j] == null) continue;
+                float rollingUnderY = 0;
+                switch (PuzzleManager.Instance.Size)
+                {
+                    case 4:
+                        rollingUnderY = size4Field.transform.localPosition.y + 1;
+                        break;
+                    case 5:
+                        rollingUnderY = size5Field.transform.localPosition.y + 1;
+                        break;
+                }
                 Vector3 correctPosition = new Vector3(j - (PuzzleManager.Instance.Size - 1) / 2.0f,
-                    (i >= PuzzleManager.Instance.Size) ? (i - (PuzzleManager.Instance.Size - 1) / 2.0f - 0.9f) : (i - (PuzzleManager.Instance.Size - 1) / 2.0f - 1));
+                    (i >= PuzzleManager.Instance.Size) ? (i - (PuzzleManager.Instance.Size - 1) / 2.0f + rollingUnderY - 0.9f) : (i - (PuzzleManager.Instance.Size - 1) / 2.0f + rollingUnderY - 1));
                 if ((ballObjects[i][j].gameObject.transform.localPosition - correctPosition).magnitude < 0.1f)
                 {
                     if (ballObjects[i][j].gameObject.GetComponent<Rigidbody2D>().isKinematic == false)
@@ -412,6 +501,10 @@ public class PuzzleView : MonoBehaviour
                         ballObjects[i][j].gameObject.transform.localPosition = correctPosition;
                         ballObjects[i][j].gameObject.transform.localRotation = Quaternion.identity;
                         ballObjects[i][j].gameObject.GetComponent<PuzzleBall>().SetActiveRangeBox(true);
+                    }
+                    else
+                    {
+                        ballObjects[i][j].gameObject.transform.localPosition = correctPosition;
                     }
                 }
                 else isCorrectPosition = false;
@@ -428,6 +521,16 @@ public class PuzzleView : MonoBehaviour
             for (int j = 0; j < PuzzleManager.Instance.Size; j++)
             {
                 if (ballObjects[i][j] == null) continue;
+                float rollingUnderY = 0;
+                switch (PuzzleManager.Instance.Size)
+                {
+                    case 4:
+                        rollingUnderY = size4Field.transform.localPosition.y + 1;
+                        break;
+                    case 5:
+                        rollingUnderY = size5Field.transform.localPosition.y + 1;
+                        break;
+                }
                 Vector3 correctPosition = new Vector3();
                 switch (PuzzleManager.Instance.Size)
                 {
@@ -437,11 +540,11 @@ public class PuzzleView : MonoBehaviour
                         //-1:360-270
                         if (rollWay == 1)
                         {
-                            correctPosition= size4Field.transform.localRotation * Quaternion.Euler(0, 0, -90) * new Vector3(j - (PuzzleManager.Instance.Size - 1) / 2.0f, i - (PuzzleManager.Instance.Size - 1) / 2.0f) - new Vector3(0, 1);
+                            correctPosition = size4Field.transform.localRotation * Quaternion.Euler(0, 0, -90) * new Vector3(j - (PuzzleManager.Instance.Size - 1) / 2.0f, i - (PuzzleManager.Instance.Size - 1) / 2.0f) + new Vector3(0, -1 + rollingUnderY);
                         }
                         else if (rollWay == -1)
                         {
-                            correctPosition = size4Field.transform.localRotation * Quaternion.Euler(0, 0, 90) * new Vector3(j - (PuzzleManager.Instance.Size - 1) / 2.0f, i - (PuzzleManager.Instance.Size - 1) / 2.0f) - new Vector3(0, 1);
+                            correctPosition = size4Field.transform.localRotation * Quaternion.Euler(0, 0, 90) * new Vector3(j - (PuzzleManager.Instance.Size - 1) / 2.0f, i - (PuzzleManager.Instance.Size - 1) / 2.0f) + new Vector3(0, -1 + rollingUnderY);
                         }
                         break;
                     case 5:
@@ -534,6 +637,46 @@ public class PuzzleView : MonoBehaviour
                 }
                 ballObjects = rolledPuzzleField;
                 break;
+        }
+    }
+    public void DisappearOperationButton()
+    {
+        LeftButton.interactable = false;
+        RightButton.interactable = false;
+        LeftTurnButton.interactable = false;
+        RightTurnButton.interactable = false;
+        NotTurnButton.interactable = false;
+    }
+    public void AppearTurnButton()
+    {
+        LeftTurnButton.interactable = true;
+        RightTurnButton.interactable = true;
+        NotTurnButton.interactable = true;
+    }
+    public void AppearInButton()
+    {
+        LeftButton.interactable = true;
+        RightButton.interactable = true;
+    }
+    public void AddScore(int plusScore = 1)
+    {
+        displayScore += plusScore;
+    }
+    public void ScoreChipSpawn(int chipNum, bool isRoundBonus)
+    {
+        for (int i = 0; i < chipNum; i++)
+        {
+            GameObject newChip;
+            newChip = Instantiate(scoreChipPrefab);
+            newChip.GetComponent<ScoreChip>().startPosition.position = scoreDisplay.GetComponent<RectTransform>().localPosition;
+            if (isRoundBonus)
+            {
+                newChip.GetComponent<ScoreChip>().startPosition.position = roundDisplay.GetComponent<RectTransform>().localPosition;
+            }
+            else
+            {
+                newChip.GetComponent<ScoreChip>().startPosition.position = new Vector3(0, -166, 0);
+            }
         }
     }
 }
