@@ -183,9 +183,13 @@ public class GameManager : MonoBehaviour
                 PuzzleManager.Instance.ChooseNextColor();
                 PuzzleView.Instance.DisplayNextColor(PuzzleManager.Instance.nextColor);
                 print("NextColorは" + PuzzleManager.Instance.nextColor);
-                print("ラウンド数ボーナス:"+PuzzleManager.Instance.round.ToString());
-                PuzzleView.Instance.ScoreChipSpawn(PuzzleManager.Instance.round,true);
-                PuzzleManager.Instance.score += PuzzleManager.Instance.round++;
+                if(PuzzleManager.Instance.round%10==0)
+                {
+                    print("ラウンド数ボーナス:" + PuzzleManager.Instance.round.ToString());
+                    PuzzleView.Instance.ScoreChipSpawn(PuzzleManager.Instance.round, true);
+                    PuzzleManager.Instance.score += PuzzleManager.Instance.round;
+                }
+                PuzzleManager.Instance.round++;
                 PuzzleView.Instance.AppearInButton();
                 break;
             case GameState.RollDirectionSelect:

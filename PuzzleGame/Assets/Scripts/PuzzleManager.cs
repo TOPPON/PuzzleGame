@@ -285,8 +285,8 @@ public class PuzzleManager : MonoBehaviour
     }
     public void AddScore(int deleteLines)
     {
-        score += (int)(deleteLines*combo*Mathf.Pow(2,comboRound)*(round/10.0+10));
-        PuzzleView.Instance.ScoreChipSpawn((int)(deleteLines * combo * Mathf.Pow(2, comboRound) * (round / 10.0 + 10)),false);
-        print("ライン数:x"+deleteLines.ToString()+" Combo:x"+combo.ToString()+" comboRoundBonus:x"+ Mathf.Pow(2, comboRound).ToString()+" baseScore:"+ (round / 10.0 + 10).ToString());
+        score += (int)(deleteLines*combo*Mathf.Pow(3,comboRound)*(round/5.0+10));
+        PuzzleView.Instance.ScoreChipSpawn((int)(deleteLines * combo * Mathf.Pow(3, comboRound) * (round / 5.0 + 10)),false);
+        print("ライン数:x"+deleteLines.ToString()+" Combo:x"+combo.ToString()+" comboRoundBonus:x"+ Mathf.Pow(3, comboRound).ToString()+" baseScore:"+ (round / 5.0 + 10).ToString());
     }
 }

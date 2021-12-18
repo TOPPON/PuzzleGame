@@ -50,7 +50,7 @@ public class PuzzleView : MonoBehaviour
     public bool finishFall;
     private int rollWay;//回転する方向、-1:左、1:右、0:なし
     private float rollTimer;
-    const float maxRollTime = 3;
+    const float maxRollTime = 1.5f;
     private int displayScore = 0;
     private enum RollState
     {
@@ -80,16 +80,16 @@ public class PuzzleView : MonoBehaviour
             switch (rollState)
             {
                 case RollState.BeforeDown:
-                    if (rollTimer < 1)
+                    if (rollTimer < 0.5f)
                     {
                         rollTimer += Time.deltaTime;
                         switch (PuzzleManager.Instance.Size)
                         {
                             case 4:
-                                size4Field.transform.localPosition = new Vector3(0, -1 - rollTimer);
+                                size4Field.transform.localPosition = new Vector3(0, -1 - rollTimer * 2);
                                 break;
                             case 5:
-                                size5Field.transform.localPosition = new Vector3(0, -1 - rollTimer);
+                                size5Field.transform.localPosition = new Vector3(0, -1 - rollTimer * 2);
                                 break;
                         }
                     }
@@ -139,15 +139,15 @@ public class PuzzleView : MonoBehaviour
                     }
                     break;
                 case RollState.AfterUp:
-                    if (rollTimer < 1)
+                    if (rollTimer < 0.5f)
                     {
                         rollTimer += Time.deltaTime; switch (PuzzleManager.Instance.Size)
                         {
                             case 4:
-                                size4Field.transform.localPosition = new Vector3(0, -2 + rollTimer);
+                                size4Field.transform.localPosition = new Vector3(0, -2 + rollTimer*2);
                                 break;
                             case 5:
-                                size5Field.transform.localPosition = new Vector3(0, -2 + rollTimer);
+                                size5Field.transform.localPosition = new Vector3(0, -2 + rollTimer * 2);
                                 break;
                         }
                     }
