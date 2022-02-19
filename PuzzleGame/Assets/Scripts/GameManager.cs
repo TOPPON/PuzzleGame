@@ -162,6 +162,8 @@ public class GameManager : MonoBehaviour
                 if(stateTimer>10)
                 {
                     ChangeGameState(GameState.GameOver);
+                    int rank=RankingManager.Instance.InsertScore(PuzzleManager.Instance.score,PuzzleManager.Instance.round);
+                    if(rank!=0)RankingManager.Instance.Save();
                 }
                 break;
             case GameState.GameOver:
