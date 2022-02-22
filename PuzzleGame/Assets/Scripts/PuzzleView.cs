@@ -40,8 +40,15 @@ public class PuzzleView : MonoBehaviour
     [SerializeField] private Button LeftTurnButton;
     [SerializeField] private Button RightTurnButton;
     [SerializeField] private Button NotTurnButton;
-    [SerializeField] private GameObject GameSet;
+    [SerializeField] private GameObject GameSet;//フィールド、ボールなどすべてまとめたもの
     [SerializeField] private GameObject Canvas;
+    [SerializeField] private GameObject GameOverBlackOut;
+    [SerializeField] private Text Rank1ScoreDisplay;
+    [SerializeField] private Text Rank1RoundDisplay;
+    [SerializeField] private Text Rank2ScoreDisplay;
+    [SerializeField] private Text Rank2RoundDisplay;
+    [SerializeField] private Text Rank3ScoreDisplay;
+    [SerializeField] private Text Rank3RoundDisplay;
     private List<List<GameObject>> ballObjects = new List<List<GameObject>>();
 
 
@@ -52,6 +59,7 @@ public class PuzzleView : MonoBehaviour
     private float rollTimer;
     const float maxRollTime = 1.5f;
     private int displayScore = 0;
+    private float GameoverTimer = 0;
     private enum RollState
     {
         BeforeDown,
@@ -60,7 +68,18 @@ public class PuzzleView : MonoBehaviour
     }
     RollState rollState;
     // Start is called before the first frame update
-    void Start()
+    /*void Start()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }*/
+    private void OnLevelWasLoaded(int level)
     {
         if (Instance == null)
         {

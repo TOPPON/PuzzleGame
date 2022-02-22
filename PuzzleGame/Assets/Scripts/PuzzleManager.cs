@@ -15,8 +15,7 @@ public class PuzzleManager : MonoBehaviour
     public int round;//ラウンド数、基本スコアになる
     public int comboRound;//一回の操作での連鎖数(Fallが呼ばれた回数分)
 
-    // Start is called before the first frame update
-    void Start()
+    private void OnLevelWasLoaded(int level)
     {
         if (Instance == null)
         {
@@ -36,6 +35,27 @@ public class PuzzleManager : MonoBehaviour
             puzzleField.Add(tempList);
         }
     }
+    // Start is called before the first frame update
+    /*void Start()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(this.gameObject);
+        }
+        for (int i = 0; i < Size + Exheight; i++)
+        {
+            List<int> tempList = new List<int>();
+            for (int j = 0; j < Size; j++)
+            {
+                tempList.Add(-1);
+            }
+            puzzleField.Add(tempList);
+        }
+    }*/
     /*
      x=0,y=size+ex-1 x=1,
      

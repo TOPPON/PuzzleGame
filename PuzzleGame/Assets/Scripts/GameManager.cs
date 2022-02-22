@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    public GameManager Instance;
     public enum GameState
     {
         GameStart,
@@ -29,8 +30,20 @@ public class GameManager : MonoBehaviour
     private bool pushRightTurnButton;
     private bool pushNotTurnButton;
     // Start is called before the first frame update
-    void Start()
+    /*void Start()
     {
+        ChangeGameState(GameState.GameStart);
+    }*/
+    private void OnLevelWasLoaded(int level)
+    {
+        if(Instance==null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
         ChangeGameState(GameState.GameStart);
     }
 
@@ -162,11 +175,12 @@ public class GameManager : MonoBehaviour
                 if(stateTimer>10)
                 {
                     ChangeGameState(GameState.GameOver);
-                    int rank=RankingManager.Instance.InsertScore(PuzzleManager.Instance.score,PuzzleManager.Instance.round);
-                    if(rank!=0)RankingManager.Instance.Save();
                 }
                 break;
             case GameState.GameOver:
+                int rank = RankingManager.Instance.InsertScore(PuzzleManager.Instance.score, PuzzleManager.Instance.round);
+                if (rank != 0) RankingManager.Instance.Save();
+                SystemManager.Instance.GameOver(rank, PuzzleManager.Instance.score, PuzzleManager.Instance.round);
                 break;
         }
         pushLeftButton = false;
