@@ -44,7 +44,8 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        ChangeGameState(GameState.GameStart);
+        //ChangeGameState(GameState.GameStart);
+        gameState = GameState.GameStart;
     }
 
     // Update is called once per frame
@@ -178,9 +179,7 @@ public class GameManager : MonoBehaviour
                 }
                 break;
             case GameState.GameOver:
-                int rank = RankingManager.Instance.InsertScore(PuzzleManager.Instance.score, PuzzleManager.Instance.round);
-                if (rank != 0) RankingManager.Instance.Save();
-                SystemManager.Instance.GameOver(rank, PuzzleManager.Instance.score, PuzzleManager.Instance.round);
+                SystemManager.Instance.GameOver();
                 break;
         }
         pushLeftButton = false;

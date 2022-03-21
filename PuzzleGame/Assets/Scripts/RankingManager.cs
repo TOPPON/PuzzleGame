@@ -1,15 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class RankingManager : MonoBehaviour
 {
     public static RankingManager Instance;
     //(int score, int round) result = (0,0);
     List<(int score, int round)> ranking = new List<(int score, int round)>();
-    //Ranking[] ranking = new Ranking[3];
+    [SerializeField] Text rank1Score;
+    [SerializeField] Text rank1Round;
+    [SerializeField] Text rank2Score;
+    [SerializeField] Text rank2Round;
+    [SerializeField] Text rank3Score;
+    [SerializeField] Text rank3Round;
     // Start is called before the first frame update
-    void Start()
+    /*private void OnLevelWasLoaded(int level)
     {
         if (Instance == null)
         {
@@ -20,7 +26,7 @@ public class RankingManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-    }
+    }*/
 
     // Update is called once per frame
     void Update()
@@ -41,6 +47,7 @@ public class RankingManager : MonoBehaviour
             {
                 ranking.Insert(count, (score, round));
                 ranking.RemoveAt(3);
+                RankTextAdjust();
                 return count + 1;
             }
             count++;
@@ -48,18 +55,32 @@ public class RankingManager : MonoBehaviour
         if (count != 3)
         {
             ranking.Add((score, round));
+            RankTextAdjust();
             return count + 1;
         }
-        else return 0;
+        else
+        {
+            RankTextAdjust();
+            return 0;
+        }
     }
     public void Save()
     {
-        PlayerPrefs.SetInt("FirstScore", ranking[0].score);
-        PlayerPrefs.SetInt("FirstRound", ranking[0].round);
-        PlayerPrefs.SetInt("SecondScore", ranking[1].score);
-        PlayerPrefs.SetInt("SecondRound", ranking[1].round);
-        PlayerPrefs.SetInt("ThirdScore", ranking[2].score);
-        PlayerPrefs.SetInt("ThirdRound", ranking[2].round);
+        if (ranking.Count >= 3)
+        {
+            PlayerPrefs.SetInt("ThirdScore", ranking[2].score);
+            PlayerPrefs.SetInt("ThirdRound", ranking[2].round);
+        }
+        if (ranking.Count >= 2)
+        {
+            PlayerPrefs.SetInt("SecondScore", ranking[1].score);
+            PlayerPrefs.SetInt("SecondRound", ranking[1].round);
+        }
+        if (ranking.Count >= 1)
+        {
+            PlayerPrefs.SetInt("FirstScore", ranking[0].score);
+            PlayerPrefs.SetInt("FirstRound", ranking[0].round);
+        }
         PrintRanking();
     }
     public void Load()
@@ -77,6 +98,24 @@ public class RankingManager : MonoBehaviour
         {
             count++;
             print("RANK" + count + " : " + rank.score + " - " + rank.round);
+        }
+    }
+    private void RankTextAdjust()
+    {
+        if (ranking.Count >= 3)
+        {
+            rank3Score.text = "" + ranking[2].score;
+            rank3Round.text = "" + ranking[2].round;
+        }
+        if (ranking.Count >= 2)
+        {
+            rank2Score.text = "" + ranking[1].score;
+            rank2Round.text = "" + ranking[1].round;
+        }
+        if (ranking.Count >= 1)
+        {
+            rank1Score.text = "" + ranking[0].score;
+            rank1Round.text = "" + ranking[0].round;
         }
     }
 }

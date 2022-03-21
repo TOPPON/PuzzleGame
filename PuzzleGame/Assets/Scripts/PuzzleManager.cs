@@ -78,8 +78,8 @@ public class PuzzleManager : MonoBehaviour
     }
     public void Roll(int rollDirection)//-1:左 0:真ん中 1:右 
     {
-        print("Rolling\n");
-        PrintField(puzzleField);
+        //print("Rolling\n");
+        //PrintField(puzzleField);
         List<List<int>> rolledPuzzleField = new List<List<int>>();
         for (int i = 0; i < Size; i++)
         {
@@ -130,7 +130,7 @@ public class PuzzleManager : MonoBehaviour
                 break;
         }
         print("Rolled\n");
-        PrintField(puzzleField);
+        //PrintField(puzzleField);
     }
     public int PutBall(int line, int color)
     {
@@ -301,7 +301,7 @@ public class PuzzleManager : MonoBehaviour
             }
         }
         print("Falled\n");
-        PrintField(puzzleField);
+        //PrintField(puzzleField);
     }
     public void AddScore(int deleteLines)
     {

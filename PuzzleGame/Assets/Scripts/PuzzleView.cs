@@ -148,6 +148,15 @@ public class PuzzleView : MonoBehaviour
                     }
                     else//回転終了
                     {
+                        switch (PuzzleManager.Instance.Size)
+                        {
+                            case 4:
+                                size4Field.transform.rotation = Quaternion.Euler(0, 0,  rollWay * 90);
+                                break;
+                            case 5:
+                                size5Field.transform.rotation = Quaternion.Euler(0, 0,  rollWay * 90);//ゲームマネージャーから回転の指示が来た瞬間に当たり判定いじる
+                                break;
+                        }
                         if (CheckAndFreezeBallsPosition())
                         {
                             ResetWall();
@@ -160,7 +169,8 @@ public class PuzzleView : MonoBehaviour
                 case RollState.AfterUp:
                     if (rollTimer < 0.5f)
                     {
-                        rollTimer += Time.deltaTime; switch (PuzzleManager.Instance.Size)
+                        rollTimer += Time.deltaTime;
+                        switch (PuzzleManager.Instance.Size)
                         {
                             case 4:
                                 size4Field.transform.localPosition = new Vector3(0, -2 + rollTimer*2);
@@ -511,7 +521,7 @@ public class PuzzleView : MonoBehaviour
                 }
                 Vector3 correctPosition = new Vector3(j - (PuzzleManager.Instance.Size - 1) / 2.0f,
                     (i >= PuzzleManager.Instance.Size) ? (i - (PuzzleManager.Instance.Size - 1) / 2.0f - 0.9f) : (i - (PuzzleManager.Instance.Size - 1) / 2.0f + rollingUnderY - 1));
-                if ((ballObjects[i][j].gameObject.transform.localPosition - correctPosition).magnitude < 0.1f)
+                if ((ballObjects[i][j].gameObject.transform.localPosition - correctPosition).magnitude < 0.1f*Time.timeScale)
                 {
                     if (ballObjects[i][j].gameObject.GetComponent<Rigidbody2D>().isKinematic == false)
                     {
@@ -573,7 +583,7 @@ public class PuzzleView : MonoBehaviour
                              Mathf.Sin(size5Field.transform.localRotation.eulerAngles.z * Mathf.PI / 180) * new Vector3(j - (PuzzleManager.Instance.Size - 1) / 2.0f, i - (PuzzleManager.Instance.Size - 1) / 2.0f).magnitude - 1);
                         break;
                 }
-                if ((ballObjects[i][j].gameObject.transform.localPosition - correctPosition).magnitude < 0.05f)
+                if ((ballObjects[i][j].gameObject.transform.localPosition - correctPosition).magnitude < 0.05f * Time.timeScale)
                 {
                     //ballObjects[i][j].gameObject.GetComponent<Rigidbody2D>().isKinematic = true;
                     ballObjects[i][j].gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2();
