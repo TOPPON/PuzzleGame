@@ -89,6 +89,26 @@ public class PuzzleView : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        //カメラの画角調整
+
+        Camera.main.orthographicSize = 1280f / 2f / 100f;
+
+        float aspect = Screen.height / Screen.width;
+        float bgAspect = 1280f / 720f;
+        if(aspect<bgAspect)
+        {
+            float bgScale = 720f / Screen.width;
+            float camHeight = 1280f / (Screen.height * bgScale);
+            Camera.main.rect = new Rect(0f,(1f - camHeight) / 2f, 1f, camHeight);
+        }
+        else
+        {
+            float bgScale = 1280f / Screen.height;
+            float camWidth = 720f / (Screen.width * bgScale);
+            Camera.main.rect = new Rect((1f-camWidth)/2f,0f,camWidth,1f);
+        }
+
     }
 
     // Update is called once per frame

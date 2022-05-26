@@ -155,7 +155,7 @@ public class PuzzleManager : MonoBehaviour
     void PrintField(List<List<int>> field)
     {
         print("--------------------");
-        for (int i = Size +Exheight- 1; i >= 0; i--)
+        for (int i = Size + Exheight - 1; i >= 0; i--)
         {
             string a = "";
             for (int j = 0; j < Size; j++)
@@ -213,7 +213,7 @@ public class PuzzleManager : MonoBehaviour
         }
         for (int i = 0; i < Size; i++)
         {
-            if (puzzleField[0][Size-1] == puzzleField[i][Size-1-i] & puzzleField[i][Size-1-i] != -1)
+            if (puzzleField[0][Size - 1] == puzzleField[i][Size - 1 - i] & puzzleField[i][Size - 1 - i] != -1)
             {
                 if (i == Size - 1)
                 {
@@ -305,8 +305,7 @@ public class PuzzleManager : MonoBehaviour
     }
     public void AddScore(int deleteLines)
     {
-        score += (int)(deleteLines*combo*Mathf.Pow(3,comboRound)*(round/5.0+10));
-        PuzzleView.Instance.ScoreChipSpawn((int)(deleteLines * combo * Mathf.Pow(3, comboRound) * (round / 5.0 + 10)),false);
-        print("ライン数:x"+deleteLines.ToString()+" Combo:x"+combo.ToString()+" comboRoundBonus:x"+ Mathf.Pow(3, comboRound).ToString()+" baseScore:"+ (round / 5.0 + 10).ToString());
+        score += (int)(deleteLines * combo * Mathf.Pow(3, comboRound) * (round / 5.0 + 10));
+        PuzzleView.Instance.ScoreChipSpawn((int)(deleteLines * combo * Mathf.Pow(3, comboRound) * (round / 5.0 + 10)), false);
     }
 }
