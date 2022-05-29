@@ -57,7 +57,9 @@ public class Difficultcalculator : MonoBehaviour
                 condition.initialBoard.Add(templist);
                 print(teststring);
             }
-            condition.clearMethod = ClearMethod.Survive;
+            condition.clearBasis =condition.operation/ 4+Random.Range(-9,2);
+            print("Basis:"+condition.clearBasis);
+            condition.clearMethod = ClearMethod.Lines;
             print(CalcDifficult(condition, 10000));
         }
     }
@@ -76,6 +78,12 @@ public class Difficultcalculator : MonoBehaviour
             {
                 case ClearMethod.AllDelete:
                     success += CheckAllDeteleClear(condition);
+                    break;
+                case ClearMethod.Lines:
+                    success += CheckLinesClear(condition);
+                    break;
+                case ClearMethod.DoubleLine:
+                    success += CheckDoubleLineClear(condition);
                     break;
                 case ClearMethod.Survive:
                     success+= CheckSurviveClear(condition);
@@ -126,6 +134,105 @@ public class Difficultcalculator : MonoBehaviour
         }
         return 0;
     }
+    public int CheckLinesClear(Condition condition)
+    {
+        int sumLine=0;
+        List<List<int>> board = new List<List<int>>();
+        InitialSetBoard(condition, ref board);
+        for (int i = 0; i < condition.operation; i++)
+        {
+            //print("Turn" + (i + 1).ToString());
+            //投入
+            if (InsertRandom(ref board, condition.nextColor[i]) == -1)
+            {
+                //ゲームオーバー判定
+                return 0;
+            }
+            //消える判定
+            while (true)
+            {
+                List<int> deleteLine = JudgeLine(ref board);
+                if (deleteLine.Count == 0) break;
+                sumLine += deleteLine.Count;
+                if (sumLine >= condition.clearBasis) return 1;
+                Fall(ref board);
+            }
+            //回転
+            int rollDirection = Random.Range(-1, 2);
+            Roll(ref board, rollDirection);
+            Fall(ref board);
+            //消える判定
+
+            while (true)
+            {
+                List<int> deleteLine = JudgeLine(ref board);
+                if (deleteLine.Count == 0) break;
+                sumLine += deleteLine.Count;
+                if (sumLine >= condition.clearBasis) return 1;
+                Fall(ref board);
+            }
+
+            //確認
+            //PrintField(board);
+
+        }
+        return 0;
+    }
+    public int CheckDoubleLineClear(Condition condition)
+    {
+        int doubleLine = 0;
+        List<List<int>> board = new List<List<int>>();
+        InitialSetBoard(condition, ref board);
+        for (int i = 0; i < condition.operation; i++)
+        {
+            //print("Turn" + (i + 1).ToString());
+            //投入
+            if (InsertRandom(ref board, condition.nextColor[i]) == -1)
+            {
+                //ゲームオーバー判定
+                return 0;
+            }
+
+            //消える判定
+            int tempDoubleLine = 0;
+            while (true)
+            {
+                List<int> deleteLine = JudgeLine(ref board);
+                if (deleteLine.Count == 0) break;
+                tempDoubleLine += deleteLine.Count;
+                if (tempDoubleLine >= 2)
+                {
+                    doubleLine++;
+                    if (doubleLine >= condition.clearBasis) return 1;
+                }
+                Fall(ref board);
+            }
+            //回転
+            int rollDirection = Random.Range(-1, 2);
+            Roll(ref board, rollDirection);
+            Fall(ref board);
+            
+            //消える判定
+            tempDoubleLine = 0;
+            while (true)
+            {
+                List<int> deleteLine = JudgeLine(ref board);
+                if (deleteLine.Count == 0) break;
+                tempDoubleLine += deleteLine.Count;
+                if (tempDoubleLine >= 2)
+                {
+                    doubleLine++;
+                    if (doubleLine >= condition.clearBasis) return 1;
+                }
+                Fall(ref board);
+            }
+
+            //確認
+            //PrintField(board);
+
+        }
+        return 0;
+    }
     public int CheckSurviveClear(Condition condition)
     {
         List<List<int>> board = new List<List<int>>();
@@ -151,6 +258,7 @@ public class Difficultcalculator : MonoBehaviour
             Roll(ref board, rollDirection);
             Fall(ref board);
             //消える判定
+
             while (true)
             {
                 List<int> deleteLine = JudgeLine(ref board);
@@ -164,6 +272,7 @@ public class Difficultcalculator : MonoBehaviour
         }
         return 1;
     }
+    
     private int InsertRandom(ref List<List<int>> board, int color)
     {
         int line = Random.Range(0, 4);
